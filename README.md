@@ -177,13 +177,14 @@ Step 1:
 
 Export Attributes To Excel
 
-↓
+<img width="576" height="372" alt="1" src="https://github.com/user-attachments/assets/36eb5d95-d5a3-48a7-b650-fcf15efdffdf" />
+
 
 Step 2:
 
 Edit attributes in Excel
 
-↓
+
 
 Step 3:
 
@@ -195,6 +196,8 @@ Step 4:
 
 Apply Excel Edits Back To Layer
 
+<img width="563" height="432" alt="2" src="https://github.com/user-attachments/assets/c1145c5e-6c69-4655-a96b-e2a6c0ae50a1" />
+
 ---
 
 ## Coordinate Extraction
@@ -203,7 +206,8 @@ Step 1:
 
 Select Polygon or Polyline layer
 
-↓
+<img width="575" height="514" alt="3" src="https://github.com/user-attachments/assets/bba9a6f5-f2b6-42f8-9107-d14b7223a53d" />
+
 
 Step 2:
 
