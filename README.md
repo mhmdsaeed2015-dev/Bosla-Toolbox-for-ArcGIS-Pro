@@ -7,7 +7,7 @@
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 ![Version](https://img.shields.io/badge/Version-1.3.0-orange)
 
-Field crews, surveyors, and project stakeholders live in Excel. Your data lives in ArcGIS Pro. Permits need coordinates in DMS. Databases need bulk edits nobody dares to make. Bosla bridges these gaps: **8 production-grade tools** for the Excel round trip, coordinate conversion in both directions, data quality control, and safe database maintenance — built by a geomatics professional for daily production work in surveying and upstream oil & gas.
+Field crews, surveyors, and project stakeholders live in Excel. Your data lives in ArcGIS Pro. Permits need coordinates in DMS. Databases need bulk edits nobody dares to make. Bosla bridges these gaps: **8 production-grade tools** for the Excel round trip, coordinate conversion in both directions, data quality control, and safe database maintenance — built by a geomatics professional for daily production work in surveying activities
 
 > ### ⚠️ Built for production data
 > Every destructive operation in Bosla is designed to be safe by default:
