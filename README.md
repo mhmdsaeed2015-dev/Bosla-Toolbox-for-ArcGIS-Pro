@@ -1,354 +1,176 @@
-# Geomatics Combined Tools for ArcGIS Pro
+# 🧭 Bosla Toolbox for ArcGIS Pro
 
-A professional ArcGIS Pro Python Toolbox designed to improve GIS, Geomatics, Surveying, and Spatial Data Management workflows.
+**Bosla (بوصلة) — Arabic for "compass." Because every survey starts with one.**
 
-This toolbox combines attribute editing and coordinate extraction tools into a single package and supports any coordinate system available in ArcGIS Pro through the native Coordinate System Picker. The design removes dependency on hard-coded coordinate systems, making the toolbox suitable for users worldwide.
+![ArcGIS Pro](https://img.shields.io/badge/ArcGIS%20Pro-3.x-blue)
+![Python](https://img.shields.io/badge/Python-3.x-green)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+![Version](https://img.shields.io/badge/Version-1.3.0-orange)
+
+Field crews, surveyors, and project stakeholders live in Excel. Your data lives in ArcGIS Pro. Permits need coordinates in DMS. Databases need bulk edits nobody dares to make. Bosla bridges these gaps: **8 production-grade tools** for the Excel round trip, coordinate conversion in both directions, data quality control, and safe database maintenance — built by a geomatics professional for daily production work in surveying and upstream oil & gas.
+
+> ### ⚠️ Built for production data
+> Every destructive operation in Bosla is designed to be safe by default:
+> - **Apply Excel Edits** runs in **dry-run mode by default** — it reports every change *without writing anything* until you explicitly uncheck dry-run.
+> - An **automatic timestamped backup** is created before any update.
+> - Updates run inside an **edit session** where possible (versioned enterprise geodatabases supported), with rollback on failure.
+> - Invalid values (wrong type, over-length text, unparseable dates) are **skipped and reported per cell** — never silently written, never silently truncated.
+> - The **Backup Manager** restores only to *new* datasets — it never overwrites existing data.
 
 ---
 
-# Features
+## The 8 Tools
 
-## 01 - Export Attributes To Excel
+### 01 — Export Attributes To Excel
+Export any layer or table's attributes to a formatted, filter-ready .xlsx.
 
-Export feature class or table attributes directly to Excel (.xlsx).
-
-### Capabilities
-
-- Export attribute tables to Excel
-- Formatted spreadsheet output
-- Preserves field names
-- Includes metadata sheet
-- Automatically tracks key field
+- Styled header, frozen panes, auto-filter, sized columns
+- Key field tracked automatically (defaults to ObjectID) for safe re-import
+- Hidden metadata sheet records the source dataset, key field, and toolbox version — Tool 02 reads it back to protect you from applying edits to the wrong layer
 - Supports feature classes and standalone tables
 
-### Use Cases
+**Use it for:** bulk editing in Excel, QA/QC review, business reporting, data exchange with non-GIS colleagues.
 
-- Bulk editing in Excel
-- Data review and QA/QC
-- Business reporting
-- Data exchange with non-GIS users
+### 02 — Apply Excel Edits Back To Layer
+Apply the edits made in Excel directly back to your ArcGIS Pro layer — safely.
 
----
+- Key-field matching with automatic type normalization (no more silent "0 rows matched" when Excel turns `1` into `1.0`)
+- Every value validated and cast to the target field's type before writing
+- **Dry-run by default** · automatic backup · edit-session support for enterprise geodatabases
+- Warns if the Excel file was exported from a different layer or key field
+- Selective field updates, blank-cell handling options, per-cell error reporting
 
-## 02 - Apply Excel Edits Back To Layer
+**Use it for:** mass attribute corrections, database maintenance, vendor data integration, QA/QC fix cycles.
 
-Apply updates made in Excel directly back to ArcGIS Pro.
+### 03 — Outline To Vertices Coordinates (Universal CS)
+Convert polygon/polyline vertices to points and export coordinates in **any** coordinate system ArcGIS Pro supports.
 
-### Capabilities
+- Projected (X/Y) and geographic outputs in the same run
+- Geographic formats: Decimal Degrees, **DMS** (`31° 07' 24.441" E`), and **DDM**
+- **Datum transformation support** — pick lists auto-populate for your input/output pair, and the tool *warns you* when datums differ and no transformation is selected (the silent error that shifts Egypt 1907 ↔ WGS84 coordinates by tens of meters)
+- Universal coordinate system picker: WGS84, UTM zones, Egypt 1907, national grids, engineering systems, custom PRJ — no code changes needed
+- Multipart features, Z values, closing-vertex control, projected once per feature for speed on dense boundaries
 
-- Key field matching
-- Update selected fields
-- Dry-run mode
-- Automatic backup creation
-- Null handling options
-- Bulk attribute updates
+**Use it for:** survey coordinate reports, permit documents, concession boundary listings, control point verification.
 
-### Use Cases
+### 04 — Import Points From Excel 🆕
+The reverse direction: turn any coordinate list into a point feature class.
 
-- Mass attribute corrections
-- Database maintenance
-- QA/QC workflows
-- Vendor data updates
+- Parses **Decimal Degrees, DMS, DDM, and projected XY** — with auto-detect
+- Accepts real-world messy formats: `31° 07' 24.441" E`, `N 29 59 12.645`, `31:07:24.4W`, `31d 07m 24s E`
+- Any input coordinate system + optional datum transformation to any output system
+- Remaining Excel columns become attribute fields automatically (types inferred)
+- Unparseable rows are skipped and reported with their Excel row numbers — the import never fails on one bad cell
 
----
+**Use it for:** coordinates received in permits and official correspondence, client point lists, GPS/total station exports, legacy survey records.
 
-## 03 - Universal Vertices Coordinates Tool
+### 05 — Attribute QA/QC Report 🆕
+Scan any layer or table for data quality problems and get a formatted Excel report.
 
-Convert polygon and polyline vertices into point features while exporting coordinates in multiple formats.
+- Checks: **nulls/empties · duplicate values · whitespace problems · domain violations (coded & range) · geometry errors** (null, empty, zero area/length)
+- Output: Summary sheet (counts per field per issue) + filterable Issues sheet with OID, field, value, and diagnosis
+- Pairs with Tools 01/02: find issues → export → fix in Excel → apply back safely
 
-### Capabilities
+**Use it for:** pre-migration data audits, deliverable acceptance checks, enterprise geodatabase housekeeping.
 
-- Supports Polygon features
-- Supports Polyline features
-- Supports Multipart features
-- Creates vertex point feature class
-- Exports projected coordinates
-- Exports geographic coordinates
-- Supports Z values
-- Supports custom coordinate systems
-- Supports any ArcGIS Pro spatial reference
+### 06 — Coordinate System Audit 🆕
+Walk an entire geodatabase or folder and report the CRS of everything in it.
 
-### Coordinate Formats
+- Every feature class and raster: coordinate system, WKID, datum, units
+- Flags **Unknown CRS** and any dataset whose **datum differs from the workspace majority**
+- Excel report + datum summary
 
-#### Decimal Degrees
+**Use it for:** inheriting legacy databases, pre-project data reviews, multi-source integration sanity checks.
 
-Example:
+### 07 — Backup Manager 🆕
+Manage the timestamped backups that Tool 02 creates.
 
-31.123456
+- **List** all backups with source dataset and creation time
+- **Restore** — always to a *new* dataset, never overwriting anything
+- **Delete** — only with an explicit confirmation checkbox
 
-29.987654
+### 08 — Quick Export For Stakeholders 🆕
+One click from ArcGIS Pro to the formats everyone else can open.
 
-#### Degrees Minutes Seconds (DMS)
+- **KMZ** (Google Earth) · **GeoJSON** (auto-reprojected to WGS84) · **CSV** (attributes + WGS84 coordinates)
+- Each format exports independently — one failure never blocks the others
 
-Example:
-
-31° 07' 24.441" E
-
-29° 59' 12.645" N
-
-#### Degrees Decimal Minutes (DDM)
-
-Example:
-
-31° 07.40735' E
-
-29° 59.21071' N
+**Use it for:** management review, client deliverables, field team handoffs.
 
 ---
 
-# Universal Coordinate System Support
+## Quick Start
 
-This version does not contain any predefined coordinate systems.
+1. Download `Bosla_Toolbox.pyt`
+2. In ArcGIS Pro: **View → Catalog Pane → Toolboxes → right-click → Add Toolbox**
+3. Browse to the .pyt file → **OK**
+4. Run **01 – Export Attributes To Excel** on any layer — you'll have a formatted spreadsheet in seconds
 
-Users can select any coordinate system directly from the ArcGIS Pro Coordinate System Picker.
+## Requirements
 
-### Supported Examples
+- **ArcGIS Pro 3.x** (Windows)
+- Python packages: `arcpy`, `openpyxl` — both included in the default ArcGIS Pro Python environment. No installation needed.
 
-- WGS 1984
-- UTM Zones
-- Egypt 1907
-- State Plane
-- Lambert Conformal Conic
-- British National Grid
-- National Grids
-- Local Coordinate Systems
-- Engineering Coordinate Systems
-- Custom PRJ Files
-- Project Favorites
+## Recommended Workflows
 
-No code modifications are required to support additional coordinate systems.
+**The Excel round trip**
+`01 Export → edit in Excel → 02 Apply (dry-run) → review report → 02 Apply (live)`
 
----
+**Coordinate reporting for permits**
+`Select boundary layer → 03 Vertices tool → pick CRS + datum transformation → DMS output → attach to report`
 
-# Installation
+**Importing received coordinates**
+`Paste coordinates into Excel → 04 Import → select format & CRS → verified point layer`
 
-## Method 1 - Add Toolbox to ArcGIS Pro
+**Data quality cycle**
+`05 QA/QC Report → fix issues via 01/02 round trip → re-run 05 to confirm clean`
 
-1. Download:
+## Example Applications
 
-   GeomaticsCombinedTools_UniversalCS.pyt
+| Domain | Applications |
+|---|---|
+| **Oil & Gas** | Concession boundary reports, prospect mapping, seismic outline extraction, well planning support |
+| **Geomatics / Surveying** | Survey data processing, control point verification, coordinate reporting, total station data import |
+| **GIS** | Asset mapping, utility networks, land administration, enterprise geodatabase QA |
+| **Engineering** | Site layout verification, infrastructure planning, route analysis |
 
-2. Open ArcGIS Pro
+## Screenshots
 
-3. Open:
+*(Add screenshots or a short GIF of the Excel round trip here — see `/docs` folder)*
 
-   View → Catalog Pane
+## Version History
 
-4. Right-click:
+**v1.3.0** — Full geomatics suite
+- 🆕 Import Points From Excel (DD/DMS/DDM/XY parsing, auto-detect, datum transformations)
+- 🆕 Attribute QA/QC Report · 🆕 Coordinate System Audit · 🆕 Backup Manager · 🆕 Quick Export (KMZ/GeoJSON/CSV)
 
-   Toolboxes
+**v1.2.0** — Production hardening
+- Datum transformation support + warnings in the vertices tool
+- Type-safe Excel edits (key normalization, per-cell validation, no silent truncation)
+- Edit-session support for enterprise geodatabases · dry-run via read-only cursor
+- Metadata round-trip validation · per-feature projection (major speedup)
 
-5. Select:
+**v1.0.0** — Initial public release
+- Export Attributes To Excel · Apply Excel Edits Back To Layer · Universal Vertices Coordinates (DD/DMS/DDM)
 
-   Add Toolbox
+## Roadmap
 
-6. Browse to:
+- Excel/CSV output directly from the vertices tool
+- Coordinate precision settings and lat/lon order selection
+- Batch processing across multiple layers
+- **ArcGIS Pro Add-In version** (ribbon UI, right-click context menu integration)
 
-   GeomaticsCombinedTools_UniversalCS.pyt
+## License
 
-7. Click OK
+MIT — free for personal, academic, and commercial use.
 
-The toolbox will appear under:
+## About the Author
 
-Geomatics Combined Tools - Universal CS
+**Mohamed Abdellatief** — Geomatics & GIS Lead with 12+ years in upstream oil & gas, specializing in enterprise geospatial data architecture, full-cycle field survey operations, and AI-enabled geospatial workflows. PMP certified.
 
----
+📎 [LinkedIn](www.linkedin.com/in/mohamadabdellatief) · Issues and feature requests welcome — open one on GitHub or connect on LinkedIn.
 
-# Requirements
-
-## Software
-
-- ArcGIS Pro 3.x
-
-## Python Packages
-
-Included by default in most ArcGIS Pro installations:
-
-- arcpy
-- openpyxl
-
----
-
-# Recommended Workflow
-
-## Attribute Editing
-
-Step 1:
-
-Export Attributes To Excel
-
-<img width="576" height="372" alt="1" src="https://github.com/user-attachments/assets/36eb5d95-d5a3-48a7-b650-fcf15efdffdf" />
-
-
-Step 2:
-
-Edit attributes in Excel
-
-
-
-Step 3:
-
-Save Excel file
-
-↓
-
-Step 4:
-
-Apply Excel Edits Back To Layer
-
-<img width="563" height="432" alt="2" src="https://github.com/user-attachments/assets/c1145c5e-6c69-4655-a96b-e2a6c0ae50a1" />
+*Built with AI as a pair programmer, and 12 years of knowing exactly what to build.*
 
 ---
-
-## Coordinate Extraction
-
-Step 1:
-
-Select Polygon or Polyline layer
-
-<img width="575" height="514" alt="3" src="https://github.com/user-attachments/assets/bba9a6f5-f2b6-42f8-9107-d14b7223a53d" />
-
-
-Step 2:
-
-Run:
-
-Outline To Vertices Coordinates – Universal CS
-
-↓
-
-Step 3:
-
-Select desired:
-
-- Projected Coordinate System
-- Geographic Coordinate System
-
-↓
-
-Step 4:
-
-Choose output format:
-
-- Decimal Degrees
-- DMS
-- DDM
-
-↓
-
-Step 5:
-
-Create output vertices feature class
-
----
-
-# Example Applications
-
-## GIS
-
-- Asset Mapping
-- Utility Networks
-- Land Administration
-- Environmental Studies
-
-## Geomatics
-
-- Survey Data Processing
-- Control Point Verification
-- Coordinate Reporting
-
-## Oil & Gas
-
-- Prospect Mapping
-- Seismic Outline Extraction
-- Concession Boundary Analysis
-- Well Planning Support
-
-## Engineering
-
-- Site Layout Verification
-- Infrastructure Planning
-- Route Analysis
-
----
-
-# Screenshots
-
-## Export Attributes To Excel
-
-![Export Attributes](images/ExportExcel.png)
-
----
-
-## Apply Excel Edits Back To Layer
-
-![Apply Edits](images/ApplyExcelEdits.png)
-
----
-
-## Universal Coordinate System Picker
-
-![Coordinate Picker](images/UniversalCoordinatePicker.png)
-
----
-
-## Vertices Coordinate Output
-
-![Vertices Output](images/VerticesOutput.png)
-
----
-
-# Version History
-
-## v1.0.0
-
-Initial Public Release
-
-Features:
-
-- Export Attributes To Excel
-- Apply Excel Edits Back To Layer
-- Universal Vertices Coordinates Tool
-- Decimal Degrees Export
-- DMS Export
-- DDM Export
-- Universal Coordinate System Picker
-- Spatial Reference Independence
-
----
-
-# Future Roadmap
-
-Planned Enhancements
-
-- Excel Output from Vertices Tool
-- CSV Output Support
-- Coordinate Precision Settings
-- Latitude/Longitude Order Selection
-- Coordinate Labels
-- Attribute Transfer to Vertices
-- Batch Processing
-- ArcGIS Pro Add-In Version
-- Right-Click Layer Context Menu Integration
-
----
-
-# License
-
-MIT License
-
----
-
-# Author
-
-Mohamed Abdellatief
-
-Geomatics / GIS Specialist
-
-ArcGIS Pro • Python • Surveying • Spatial Data Management
-
----
-
-# Keywords
-
-ArcGIS Pro, ArcPy, GIS, Geomatics, Surveying, Coordinates, Excel, Python Toolbox, Spatial Analysis, Geospatial Automation, Coordinate Conversion, Data Management
+**Keywords:** ArcGIS Pro, ArcPy, GIS, Geomatics, Surveying, Coordinates, DMS, Excel, Python Toolbox, Spatial Analysis, Geospatial Automation, Coordinate Conversion, Datum Transformation, Data Quality, QA/QC
