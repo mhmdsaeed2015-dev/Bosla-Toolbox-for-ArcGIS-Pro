@@ -168,7 +168,7 @@ MIT — free for personal, academic, and commercial use.
 
 **Mohamed Abdellatief** — Geomatics & GIS Lead with 12+ years in upstream oil & gas, specializing in enterprise geospatial data architecture, full-cycle field survey operations, and AI-enabled geospatial workflows. PMP certified.
 
-📎 [LinkedIn](www.linkedin.com/in/mohamadabdellatief) · Issues and feature requests welcome — open one on GitHub or connect on LinkedIn.
+📎 [www.linkedin.com/in/mohamadabdellatief]· Issues and feature requests welcome — open one on GitHub or connect on LinkedIn.
 
 *Built with AI as a pair programmer, and 12 years of knowing exactly what to build.*
 
